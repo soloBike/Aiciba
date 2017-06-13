@@ -1,6 +1,10 @@
 #经浏览器抓包分析，爱词霸的每日一句有个api接口，只需更换日期即可获取对应的json字符串。解析json后对应存入mysql
 
-import requests,datetime,json,pymysql,winsound
+import requests
+from datetime import datetime,timedelta
+import json
+import pymysql
+import winsound
 
 #从浏览器copy的headers
 headers = {
@@ -20,14 +24,13 @@ coon = pymysql.connect(host='127.0.0.1', user='root', password='123456',
 cur = coon.cursor()
 
 #定义一个生成格式化时期的函数从开始日期到结束日期，日期格式如2015-08-01
-def dateRange(beginDate,endDate):
+def dateRange(startDate,endDate):
     dates = []
-    dt = datetime.datetime.strptime(beginDate,"%Y-%m-%d")
-    date = beginDate[:]
-    while date <= endDate:
-        dates.append(date)
-        dt = dt + datetime.timedelta(1)
-        date = dt.strftime("%Y-%m-%d")
+    date_tmp = datetime.strptime(startDate,"%Y-%m-%d")
+    end_date = datetime.strptime(endDate,"%Y-%m-%d")
+    while date_tmp <= end_date:
+        dates.append(date_tmp.strftime("%Y-%m-%d"))
+        date_tmp += timedelta(days=1)
     return dates
 
 
